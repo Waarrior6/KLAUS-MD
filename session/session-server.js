@@ -23,6 +23,7 @@ const statusPath = path.join(__dirname, '..', 'session_status.json');
 
 let pairingCode = null;
 let socketReady = false;
+let activeSocket = null;
 
 function writeStatus(update) {
   let current = {};
@@ -37,7 +38,22 @@ function writeStatus(update) {
 }
 
 async function buildSocket(phoneNumber) {
+  socketReady = false;
+  pairingCode = null;
+
+  // Close previous socket to avoid stale registration state.
+  if (activeSocket?.ws) {
+    try {
+      activeSocket.ws.close();
+    } catch {
+      // Ignore socket close errors.
+    }
+  }
+
+  // Pairing codes are most reliable with a fresh auth state.
+  fs.rmSync(sessionRoot, { recursive: true, force: true });
   fs.mkdirSync(sessionRoot, { recursive: true });
+
   const { state, saveCreds } = await useMultiFileAuthState(sessionRoot);
   const { version } = await fetchLatestBaileysVersion();
 
@@ -48,6 +64,7 @@ async function buildSocket(phoneNumber) {
     printQRInTerminal: false,
     browser: ['KLAUS Session', 'Chrome', '1.0.0']
   });
+  activeSocket = sock;
 
   sock.ev.on('creds.update', saveCreds);
 
@@ -58,8 +75,21 @@ async function buildSocket(phoneNumber) {
     }
   });
 
-  await delay(1000);
-  pairingCode = await sock.requestPairingCode(phoneNumber);
+  let lastError = null;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await delay(1500);
+      pairingCode = await sock.requestPairingCode(phoneNumber);
+      break;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  if (!pairingCode) {
+    throw new Error(lastError?.message || 'Unable to generate pairing code. Please try again.');
+  }
+
   logger.session(`Pairing code generated for ${phoneNumber}`);
 
   writeStatus({
@@ -391,8 +421,8 @@ app.get('/', (_, res) => {
 
 app.post('/generate', async (req, res) => {
   const number = String(req.body.number || '').replace(/[^0-9]/g, '');
-  if (!number) {
-    res.status(400).json({ ok: false, error: 'Valid phone number is required.' });
+  if (!number || number.length < 10 || number.length > 15) {
+    res.status(400).json({ ok: false, error: 'Use a valid WhatsApp number with country code (10-15 digits).' });
     return;
   }
 

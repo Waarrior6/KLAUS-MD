@@ -47,10 +47,10 @@ with fe<h1 align="center">KLAUS-MD</h1>
 ## Get Session
 
 <p align="center">
-  <a href="https://Klaus-md-69h4.onrender.com/">
+  <a href="https://klaus-md-i86d.onrender.com/">
     <img src="https://img.shields.io/badge/Get-Session-blue?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Get Session" />
   </a>
-  <a href="https://Klaus-md-69h4.onrender.com/export">
+  <a href="https://klaus-md-i86d.onrender.com/export">
     <img src="https://img.shields.io/badge/Export-Session_String-orange?style=for-the-badge&logo=json&logoColor=white" alt="Export Session" />
   </a>
 </p>
