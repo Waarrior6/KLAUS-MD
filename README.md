@@ -47,15 +47,13 @@ with fe<h1 align="center">KLAUS-MD</h1>
 ## Get Session
 
 <p align="center">
-  <a href="https://your-session-server-url.onrender.com/">
+  <a href="https://Klaus-md-69h4.onrender.com/">
     <img src="https://img.shields.io/badge/Get-Session-blue?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Get Session" />
   </a>
-  <a href="https://your-session-server-url.onrender.com/export">
+  <a href="https://Klaus-md-69h4.onrender.com/export">
     <img src="https://img.shields.io/badge/Export-Session_String-orange?style=for-the-badge&logo=json&logoColor=white" alt="Export Session" />
   </a>
 </p>
-
-> Replace `your-session-server-url` with your real values.
 
 ## Quick Setup
 
